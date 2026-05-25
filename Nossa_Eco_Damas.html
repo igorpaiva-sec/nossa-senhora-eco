@@ -310,19 +310,39 @@ body { font-family: system-ui, sans-serif; background: #0d2e5a; }
     }
   });
 
-  // Carregar fotos do JSON
-  fetch(JSON_URL)
-    .then(function (response) {
-      if (!response.ok) throw new Error('Erro ao carregar JSON');
-      return response.json();
-    })
-    .then(function (data) {
-      initCarousel(data.fotos);
-    })
-    .catch(function (err) {
-      console.error('Erro:', err);
-      document.getElementById('slides-container').innerHTML = '<p style="color:#c8daf0; padding:2rem;">Erro ao carregar as fotos. Verifique a URL do JSON.</p>';
-    });
+  // Carregar fotos do JSON com retry
+  var attempt = 0;
+  function loadCarousel() {
+    fetch(JSON_URL, { cache: 'no-store' })
+      .then(function (response) {
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        return response.json();
+      })
+      .then(function (data) {
+        if (!data.fotos || data.fotos.length === 0) {
+          throw new Error('Nenhuma foto encontrada no JSON');
+        }
+        initCarousel(data.fotos);
+      })
+      .catch(function (err) {
+        attempt++;
+        if (attempt < 3) {
+          console.log('Tentativa ' + attempt + ' falhou. Tentando novamente em 2s...');
+          setTimeout(loadCarousel, 2000);
+        } else {
+          console.error('Erro ao carregar:', err);
+          var errorMsg = 'Erro ao carregar as fotos: ' + err.message + '<br><br>' +
+            'Dicas: <br>' +
+            '1. As imagens HEIC precisam ser convertidas para JPG<br>' +
+            '2. Verifique se o imagens.json está no GitHub<br>' +
+            '3. Aguarde um pouco e recarregue a página';
+          document.getElementById('slides-container').innerHTML = 
+            '<p style="color:#c8daf0; padding:2rem; font-size:12px;">' + errorMsg + '</p>';
+        }
+      });
+  }
+
+  loadCarousel();
 
   function initCarousel(fotos) {
     var container = document.getElementById('slides-container');
