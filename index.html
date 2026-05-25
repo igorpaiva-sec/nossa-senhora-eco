@@ -65,9 +65,10 @@ body { font-family: system-ui, sans-serif; background: #0d2e5a; }
 
 .slide {
   display: none;
-  flex-direction: row;
-  align-items: stretch;
-  min-height: 380px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 500px;
 }
 .slide.active {
   display: flex;
@@ -75,13 +76,32 @@ body { font-family: system-ui, sans-serif; background: #0d2e5a; }
 }
 @keyframes sldIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
+.description {
+  background: rgba(6, 20, 46, .55);
+  border: 1px solid rgba(90, 140, 210, .25);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  backdrop-filter: blur(6px);
+}
+.description h3 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #7ab3e8;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  margin-bottom: 1rem;
+}
+.description p {
+  font-size: 13.5px;
+  line-height: 1.8;
+  color: #c8daf0;
+  margin-top: .85rem;
+}
+.description p:first-of-type { margin-top: 0; }
+
 .col-text {
-  flex: 0 0 42%;
-  padding: 2.25rem 2rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  border-right: 1px solid rgba(90, 140, 210, .2);
+  display: none;
 }
 .col-text h3 {
   font-size: 13px;
@@ -100,17 +120,18 @@ body { font-family: system-ui, sans-serif; background: #0d2e5a; }
 .col-text p:first-of-type { margin-top: 0; }
 
 .col-img {
-  flex: 0 0 58%;
+  flex: none;
   padding: 1.75rem 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 1rem;
+  width: 100%;
 }
 .col-img img {
   max-width: 100%;
-  max-height: 300px;
+  max-height: 450px;
   width: auto;
   height: auto;
   object-fit: contain;
@@ -137,18 +158,18 @@ body { font-family: system-ui, sans-serif; background: #0d2e5a; }
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1.5rem;
-  margin-top: 1.5rem;
+  gap: 3rem;
+  margin-top: 2rem;
 }
 .nav-btn {
   background: rgba(90, 150, 220, .18);
   color: #8fb3d9;
   border: 1px solid rgba(90, 150, 220, .4);
-  width: 44px;
-  height: 44px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   cursor: pointer;
-  font-size: 22px;
+  font-size: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -159,7 +180,7 @@ body { font-family: system-ui, sans-serif; background: #0d2e5a; }
   color: #fff;
   transform: scale(1.1);
 }
-#dots { display: flex; gap: 9px; align-items: center; }
+#dots { display: none; }
 .dot {
   width: 10px;
   height: 10px;
@@ -233,6 +254,14 @@ body { font-family: system-ui, sans-serif; background: #0d2e5a; }
         <p id="hdr-title">Exposição Mariana</p>
         <p id="hdr-sub">6º Ano &nbsp;·&nbsp; Mês de Maria &nbsp;·&nbsp; Arte com garrafas PET</p>
         <div id="hdr-rule"></div>
+      </div>
+
+      <div class="description">
+        <h3>Fé e sustentabilidade</h3>
+        <p>Os alunos do 6º ano realizaram um belíssimo trabalho em homenagem ao Mês de Maria, unindo criatividade, pesquisa e devoção.</p>
+        <p>Como culminância dos estudos sobre Maria, Mãe de Jesus, os estudantes pesquisaram diversos títulos marianos e suas representações na fé cristã, aprofundando o conhecimento sobre a importância de Nossa Senhora na vida da Igreja.</p>
+        <p>Para tornar esse momento ainda mais especial, os alunos transformaram garrafas PET de 2 litros em peças decorativas inspiradas nas devoções marianas, demonstrando consciência ambiental, sensibilidade artística e espiritualidade.</p>
+        <p>O resultado foi uma exposição rica em significado, beleza e dedicação, refletindo o carinho e o respeito de todos por Maria.</p>
       </div>
 
       <div id="stage" role="region" aria-live="polite"></div>
@@ -320,13 +349,6 @@ body { font-family: system-ui, sans-serif; background: #0d2e5a; }
       var urlFoto = GITHUB_REPO + '/' + foto.arquivo;
       
       slide.innerHTML = '' +
-        '<div class="col-text">' +
-        '  <h3>Fé e sustentabilidade</h3>' +
-        '  <p>Os alunos do 6º ano realizaram um belíssimo trabalho em homenagem ao Mês de Maria, unindo criatividade, pesquisa e devoção.</p>' +
-        '  <p>Como culminância dos estudos sobre Maria, Mãe de Jesus, os estudantes pesquisaram diversos títulos marianos e suas representações na fé cristã, aprofundando o conhecimento sobre a importância de Nossa Senhora na vida da Igreja.</p>' +
-        '  <p>Para tornar esse momento ainda mais especial, os alunos transformaram garrafas PET de 2 litros em peças decorativas inspiradas nas devoções marianas, demonstrando consciência ambiental, sensibilidade artística e espiritualidade.</p>' +
-        '  <p>O resultado foi uma exposição rica em significado, beleza e dedicação, refletindo o carinho e o respeito de todos por Maria.</p>' +
-        '</div>' +
         '<div class="col-img">' +
         '  <img src="' + urlFoto + '" alt="Nossa Senhora Ecológica" loading="lazy">' +
         '  <div>' +
