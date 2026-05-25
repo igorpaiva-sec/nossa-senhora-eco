@@ -1,0 +1,24 @@
+{
+  "fotos": [
+    {
+      "nome": "Aluno(a) 1",
+      "arquivo": "foto-1.jpg"
+    },
+    {
+      "nome": "Aluno(a) 2",
+      "arquivo": "foto-2.jpg"
+    },
+    {
+      "nome": "Aluno(a) 3",
+      "arquivo": "foto-3.jpg"
+    },
+    {
+      "nome": "Aluno(a) 4",
+      "arquivo": "foto-4.jpg"
+    },
+    {
+      "nome": "Aluno(a) 5",
+      "arquivo": "foto-5.jpg"
+    }
+  ]
+}
