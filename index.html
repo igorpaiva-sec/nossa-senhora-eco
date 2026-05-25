@@ -282,7 +282,8 @@ body { font-family: system-ui, sans-serif; background: #0d2e5a; }
   var cur = 0;
 
   function loadCarousel() {
-    fetch(JSON_URL, { cache: 'no-store' })
+    var url = JSON_URL + '?v=' + new Date().getTime();
+    fetch(url, { cache: 'no-store' })
       .then(function (response) {
         if (!response.ok) throw new Error('HTTP ' + response.status);
         return response.json();
