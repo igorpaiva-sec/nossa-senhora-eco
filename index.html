@@ -250,21 +250,8 @@ body { font-family: system-ui, sans-serif; background: #0d2e5a; }
 (function () {
   'use strict';
 
-  // ========== EDITE AQUI: LISTA DE FOTOS ==========
-  // Copie os nomes das imagens da pasta Imagens/
-  var FOTOS = [
-    'IMG_3824.HEIC', 'IMG_3826.HEIC', 'IMG_3827.HEIC', 'IMG_3830.HEIC', 'IMG_3833.HEIC',
-    'IMG_3837.HEIC', 'IMG_3839.HEIC', 'IMG_3841.HEIC', 'IMG_3843.HEIC', 'IMG_3844.HEIC',
-    'IMG_3846.HEIC', 'IMG_3849.HEIC', 'IMG_3851.HEIC', 'IMG_3853.HEIC', 'IMG_3855.HEIC',
-    'IMG_3856.HEIC', 'IMG_3858.HEIC', 'IMG_3861.HEIC', 'IMG_3863.HEIC', 'IMG_3865.HEIC',
-    'IMG_3867.HEIC', 'IMG_3869.HEIC', 'IMG_3871.HEIC', 'IMG_3873.HEIC', 'IMG_3874.HEIC',
-    'IMG_3877.HEIC', 'IMG_3878.HEIC', 'IMG_3881.HEIC', 'IMG_3883.HEIC', 'IMG_3885.HEIC',
-    'WhatsApp Image 2026-05-20 at 12.27.02 (1).jpeg', 'WhatsApp Image 2026-05-20 at 12.27.02 (2).jpeg',
-    // ... adicione mais conforme necessário
-  ];
-
   var GITHUB_REPO = 'https://raw.githubusercontent.com/igorpaiva-sec/Nossa-Senhora-Eco/main';
-  var PASTA_IMAGENS = 'Imagens';
+  var JSON_URL = GITHUB_REPO + '/imagens.json';
 
   var audio = document.getElementById('bg-audio');
   var audioBtn = document.getElementById('audio-btn');
@@ -284,91 +271,123 @@ body { font-family: system-ui, sans-serif; background: #0d2e5a; }
     }
   });
 
-  // Inicializar carrossel
+  // Carregar fotos do JSON com retry
+  var attempt = 0;
   var stage = document.getElementById('stage');
   var dotsEl = document.getElementById('dots');
   var counterEl = document.getElementById('counter');
-  var total = FOTOS.length;
-  var cur = 0;
   var timer = null;
   var INTERVAL = 4000;
   var dots = [];
+  var cur = 0;
 
-  // Gerar slides
-  FOTOS.forEach(function (foto, idx) {
-    var slide = document.createElement('div');
-    slide.className = 'slide' + (idx === 0 ? ' active' : '');
-    
-    var nomeAluno = foto.replace(/\.[^.]+$/, '').substring(0, 30);
-    var urlFoto = GITHUB_REPO + '/' + PASTA_IMAGENS + '/' + encodeURIComponent(foto);
-    
-    slide.innerHTML = '' +
-      '<div class="col-text">' +
-      '  <h3>Fé e sustentabilidade</h3>' +
-      '  <p>Os alunos do 6º ano realizaram um belíssimo trabalho em homenagem ao Mês de Maria, unindo criatividade, pesquisa e devoção.</p>' +
-      '  <p>Como culminância dos estudos sobre Maria, Mãe de Jesus, os estudantes pesquisaram diversos títulos marianos e suas representações na fé cristã, aprofundando o conhecimento sobre a importância de Nossa Senhora na vida da Igreja.</p>' +
-      '  <p>Para tornar esse momento ainda mais especial, os alunos transformaram garrafas PET de 2 litros em peças decorativas inspiradas nas devoções marianas, demonstrando consciência ambiental, sensibilidade artística e espiritualidade.</p>' +
-      '  <p>O resultado foi uma exposição rica em significado, beleza e dedicação, refletindo o carinho e o respeito de todos por Maria.</p>' +
-      '</div>' +
-      '<div class="col-img">' +
-      '  <img src="' + urlFoto + '" alt="Nossa Senhora Ecológica" loading="lazy">' +
-      '  <div>' +
-      '    <p class="img-caption">Nossa Senhora Ecológica</p>' +
-      '    <p class="img-name">' + nomeAluno + '</p>' +
-      '  </div>' +
-      '</div>';
-    
-    stage.appendChild(slide);
-  });
-
-  var slides = document.querySelectorAll('.slide');
-
-  // Gerar dots
-  for (var i = 0; i < total; i++) {
-    (function (idx) {
-      var btn = document.createElement('button');
-      btn.className = 'dot' + (idx === 0 ? ' active' : '');
-      btn.setAttribute('role', 'tab');
-      btn.addEventListener('click', function () { goTo(idx); reset(); });
-      dotsEl.appendChild(btn);
-      dots.push(btn);
-    })(i);
+  function loadCarousel() {
+    fetch(JSON_URL, { cache: 'no-store' })
+      .then(function (response) {
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        return response.json();
+      })
+      .then(function (data) {
+        if (!data.fotos || data.fotos.length === 0) {
+          throw new Error('Nenhuma foto encontrada no JSON');
+        }
+        initCarousel(data.fotos);
+      })
+      .catch(function (err) {
+        attempt++;
+        if (attempt < 3) {
+          console.log('Tentativa ' + attempt + ' falhou. Tentando novamente em 2s...');
+          setTimeout(loadCarousel, 2000);
+        } else {
+          console.error('Erro ao carregar:', err);
+          stage.innerHTML = '<p style="color:#c8daf0; padding:2rem; font-size:12px;">' +
+            'Erro ao carregar as fotos: ' + err.message + '<br><br>' +
+            'As imagens HEIC precisam ser convertidas para JPG para os navegadores exibirem' +
+            '</p>';
+        }
+      });
   }
 
-  function update() {
-    slides.forEach(function (s, i) { s.classList.toggle('active', i === cur); });
-    dots.forEach(function (d, i) { d.classList.toggle('active', i === cur); });
-    counterEl.textContent = (cur + 1) + ' / ' + total;
+  function initCarousel(fotos) {
+    var total = fotos.length;
+
+    // Gerar slides
+    fotos.forEach(function (foto, idx) {
+      var slide = document.createElement('div');
+      slide.className = 'slide' + (idx === 0 ? ' active' : '');
+      
+      var urlFoto = GITHUB_REPO + '/' + foto.arquivo;
+      
+      slide.innerHTML = '' +
+        '<div class="col-text">' +
+        '  <h3>Fé e sustentabilidade</h3>' +
+        '  <p>Os alunos do 6º ano realizaram um belíssimo trabalho em homenagem ao Mês de Maria, unindo criatividade, pesquisa e devoção.</p>' +
+        '  <p>Como culminância dos estudos sobre Maria, Mãe de Jesus, os estudantes pesquisaram diversos títulos marianos e suas representações na fé cristã, aprofundando o conhecimento sobre a importância de Nossa Senhora na vida da Igreja.</p>' +
+        '  <p>Para tornar esse momento ainda mais especial, os alunos transformaram garrafas PET de 2 litros em peças decorativas inspiradas nas devoções marianas, demonstrando consciência ambiental, sensibilidade artística e espiritualidade.</p>' +
+        '  <p>O resultado foi uma exposição rica em significado, beleza e dedicação, refletindo o carinho e o respeito de todos por Maria.</p>' +
+        '</div>' +
+        '<div class="col-img">' +
+        '  <img src="' + urlFoto + '" alt="Nossa Senhora Ecológica" loading="lazy">' +
+        '  <div>' +
+        '    <p class="img-caption">Nossa Senhora Ecológica</p>' +
+        '    <p class="img-name">' + foto.nome + '</p>' +
+        '  </div>' +
+        '</div>';
+      
+      stage.appendChild(slide);
+    });
+
+    var slides = document.querySelectorAll('.slide');
+
+    // Gerar dots
+    for (var i = 0; i < total; i++) {
+      (function (idx) {
+        var btn = document.createElement('button');
+        btn.className = 'dot' + (idx === 0 ? ' active' : '');
+        btn.setAttribute('role', 'tab');
+        btn.addEventListener('click', function () { goTo(idx); reset(); });
+        dotsEl.appendChild(btn);
+        dots.push(btn);
+      })(i);
+    }
+
+    function update() {
+      slides.forEach(function (s, i) { s.classList.toggle('active', i === cur); });
+      dots.forEach(function (d, i) { d.classList.toggle('active', i === cur); });
+      counterEl.textContent = (cur + 1) + ' / ' + total;
+    }
+
+    function goTo(n) { cur = (n + total) % total; update(); }
+    function next() { goTo(cur + 1); }
+    function prev() { goTo(cur - 1); }
+    function start() { clearInterval(timer); timer = setInterval(next, INTERVAL); }
+    function reset() { start(); }
+
+    document.getElementById('btn-next').addEventListener('click', function () { next(); reset(); });
+    document.getElementById('btn-prev').addEventListener('click', function () { prev(); reset(); });
+
+    stage.addEventListener('mouseenter', function () { clearInterval(timer); });
+    stage.addEventListener('mouseleave', start);
+
+    var touchStartX = 0;
+    stage.addEventListener('touchstart', function (e) {
+      touchStartX = e.touches[0].clientX;
+    }, { passive: true });
+    stage.addEventListener('touchend', function (e) {
+      var diff = touchStartX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 40) { diff > 0 ? next() : prev(); reset(); }
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight') { next(); reset(); }
+      if (e.key === 'ArrowLeft') { prev(); reset(); }
+    });
+
+    update();
+    start();
   }
 
-  function goTo(n) { cur = (n + total) % total; update(); }
-  function next() { goTo(cur + 1); }
-  function prev() { goTo(cur - 1); }
-  function start() { clearInterval(timer); timer = setInterval(next, INTERVAL); }
-  function reset() { start(); }
-
-  document.getElementById('btn-next').addEventListener('click', function () { next(); reset(); });
-  document.getElementById('btn-prev').addEventListener('click', function () { prev(); reset(); });
-
-  stage.addEventListener('mouseenter', function () { clearInterval(timer); });
-  stage.addEventListener('mouseleave', start);
-
-  var touchStartX = 0;
-  stage.addEventListener('touchstart', function (e) {
-    touchStartX = e.touches[0].clientX;
-  }, { passive: true });
-  stage.addEventListener('touchend', function (e) {
-    var diff = touchStartX - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 40) { diff > 0 ? next() : prev(); reset(); }
-  });
-
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'ArrowRight') { next(); reset(); }
-    if (e.key === 'ArrowLeft') { prev(); reset(); }
-  });
-
-  update();
-  start();
+  loadCarousel();
 })();
 </script>
 
