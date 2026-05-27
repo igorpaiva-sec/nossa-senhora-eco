@@ -55,6 +55,20 @@ body { font-family: system-ui, sans-serif; background: #0d2e5a; }
 #hdr-sub { font-size: 13px; color: #8fb3d9; margin-top: .35rem; letter-spacing: .06em; }
 #hdr-rule { width: 70px; height: 2px; background: linear-gradient(90deg, transparent, #4a90d9, transparent); margin: .85rem auto 0; }
 
+.carousel-container {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.carousel-text {
+  flex: 0 0 40%;
+}
+
+.carousel-stage {
+  flex: 1;
+}
+
 #stage {
   background: rgba(6, 20, 46, .55);
   border: 1px solid rgba(90, 140, 210, .25);
@@ -78,8 +92,8 @@ body { font-family: system-ui, sans-serif; background: #0d2e5a; }
 
 .description {
   padding: 1rem 0;
-  margin-bottom: 2rem;
-  text-align: center;
+  margin-bottom: 0;
+  text-align: left;
 }
 .description h3 {
   font-size: 13px;
@@ -217,6 +231,9 @@ body { font-family: system-ui, sans-serif; background: #0d2e5a; }
 }
 
 @media (max-width: 640px) {
+  .carousel-container { flex-direction: column; gap: 1.5rem; }
+  .carousel-text { flex: none; }
+  .carousel-stage { flex: none; width: 100%; }
   .slide.active { flex-direction: column; }
   .slide { min-height: auto; }
   .col-text {
@@ -231,6 +248,7 @@ body { font-family: system-ui, sans-serif; background: #0d2e5a; }
   }
   .col-img img { max-height: 230px; }
   .col-text p { font-size: 13px; }
+  .description { text-align: left; }
 }
 
 </style>
@@ -253,21 +271,27 @@ body { font-family: system-ui, sans-serif; background: #0d2e5a; }
         <div id="hdr-rule"></div>
       </div>
 
-      <div class="description">
-        <h3>Fé e sustentabilidade</h3>
-        <p>Os alunos do 6º ano realizaram um belíssimo trabalho em homenagem ao Mês de Maria, unindo criatividade, pesquisa e devoção.</p>
-        <p>Como culminância dos estudos sobre Maria, Mãe de Jesus, os estudantes pesquisaram diversos títulos marianos e suas representações na fé cristã, aprofundando o conhecimento sobre a importância de Nossa Senhora na vida da Igreja.</p>
-        <p>Para tornar esse momento ainda mais especial, os alunos transformaram garrafas PET de 2 litros em peças decorativas inspiradas nas devoções marianas, demonstrando consciência ambiental, sensibilidade artística e espiritualidade.</p>
-        <p>O resultado foi uma exposição rica em significado, beleza e dedicação, refletindo o carinho e o respeito de todos por Maria.</p>
-      </div>
+      <div class="carousel-container">
+        <div class="carousel-text">
+          <div class="description">
+            <h3>Fé e sustentabilidade</h3>
+            <p>Os alunos do 6º ano realizaram um belíssimo trabalho em homenagem ao Mês de Maria, unindo criatividade, pesquisa e devoção.</p>
+            <p>Como culminância dos estudos sobre Maria, Mãe de Jesus, os estudantes pesquisaram diversos títulos marianos e suas representações na fé cristã, aprofundando o conhecimento sobre a importância de Nossa Senhora na vida da Igreja.</p>
+            <p>Para tornar esse momento ainda mais especial, os alunos transformaram garrafas PET de 2 litros em peças decorativas inspiradas nas devoções marianas, demonstrando consciência ambiental, sensibilidade artística e espiritualidade.</p>
+            <p>O resultado foi uma exposição rica em significado, beleza e dedicação, refletindo o carinho e o respeito de todos por Maria.</p>
+          </div>
+        </div>
 
-      <div id="stage" role="region" aria-live="polite"></div>
+        <div class="carousel-stage">
+          <div id="stage" role="region" aria-live="polite"></div>
 
-      <div id="nav-row">
-        <button class="nav-btn" id="btn-prev">&#8592;</button>
-        <div id="dots" role="tablist"></div>
-        <span id="counter">1 / 1</span>
-        <button class="nav-btn" id="btn-next">&#8594;</button>
+          <div id="nav-row">
+            <button class="nav-btn" id="btn-prev">&#8592;</button>
+            <div id="dots" role="tablist"></div>
+            <span id="counter">1 / 1</span>
+            <button class="nav-btn" id="btn-next">&#8594;</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
