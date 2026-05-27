@@ -1,7 +1,7 @@
 {
     "fotos":  [
                   {
-                      "arquivo":  "Imagens/IMG_3824.jpg",
+                      "arquivo":  "../Imagens/IMG_3824.jpg",
                       "nome":  "Aluno - IMG_3824"
                   },
                   {
